@@ -1,17 +1,30 @@
 import discord
-from token import *
+from token_0 import *
 import youtube_dl
-import requests
-import asyncio
 from dice import *
 from discord.ext import commands
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from discord_buttons_plugin import *
 
 bot = commands.Bot(command_prefix="!")
 
-bot.run(token)  # 토큰
+def chrome_driver(url):
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument('window-size=1920x1080')
+    options.add_argument("disable-gpu")
+
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver.implicitly_wait(3)
+    driver.get(url)
+
+    page = driver.page_source
+    driver.quit()
+
+    return page
 
 @bot.command()
 async def 명령어(ctx):
@@ -24,19 +37,8 @@ async def 명령어(ctx):
 
 @bot.command()
 async def 배구(ctx, category):
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    options.add_argument('window-size=1920x1080')
-    options.add_argument("disable-gpu")
-
-    path = "C:/Users/J/Desktop/project_007/chromedriver_win32/chromedriver.exe"
-    driver = webdriver.Chrome(executable_path=path, options=options)
-    driver.implicitly_wait(3)
-
     url = f"https://sports.news.naver.com/volleyball/record/index?category={category}"
-    driver.get(url)
-
-    page = driver.page_source
+    page = chrome_driver(url)
     team_rank = BeautifulSoup(page, "html.parser")
     team_rank_list = team_rank.select('#regularTeamRecordList_table>tr')
 
@@ -66,23 +68,10 @@ async def 배구(ctx, category):
 
     await ctx.send(embed=embed)
 
-    driver.quit()
-
 @bot.command()
 async def nba(ctx, category):
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    options.add_argument('window-size=1920x1080')
-    options.add_argument("disable-gpu")
-
-    path = "C:/Users/J/Desktop/project_007/chromedriver_win32/chromedriver.exe"
-    driver = webdriver.Chrome(executable_path=path, options=options)
-    driver.implicitly_wait(3)
-
     url = f"https://sports.news.naver.com/basketball/record/index?category=nba&conference={category}"
-    driver.get(url)
-
-    page = driver.page_source
+    page = chrome_driver(url)
     team_rank = BeautifulSoup(page, "html.parser")
     team_rank_list = team_rank.select('#regularTeamRecordList_table>tr')
 
@@ -113,23 +102,10 @@ async def nba(ctx, category):
 
     await ctx.send(embed=embed)
 
-    driver.quit()
-
 @bot.command()
 async def kbl(ctx):
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    options.add_argument('window-size=1920x1080')
-    options.add_argument("disable-gpu")
-
-    path = "C:/Users/J/Desktop/project_007/chromedriver_win32/chromedriver.exe"
-    driver = webdriver.Chrome(executable_path=path, options=options)
-    driver.implicitly_wait(3)
-
     url = f"https://sports.news.naver.com/basketball/record/index?category=kbl"
-    driver.get(url)
-
-    page = driver.page_source
+    page = chrome_driver(url)
     team_rank = BeautifulSoup(page, "html.parser")
     team_rank_list = team_rank.select('#regularTeamRecordList_table>tr')
 
@@ -160,28 +136,15 @@ async def kbl(ctx):
 
     await ctx.send(embed=embed)
 
-    driver.quit()
-
 @bot.command()
 async def football(ctx, category):
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    options.add_argument('window-size=1920x1080')
-    options.add_argument("disable-gpu")
-
-    path = "C:/Users/J/Desktop/project_007/chromedriver_win32/chromedriver.exe"
-    driver = webdriver.Chrome(executable_path=path, options=options)
-    driver.implicitly_wait(3)
-
     url = f"https://sports.news.naver.com/wfootball/record/index?category={category}&tab=team"
-    driver.get(url)
-
-    page = driver.page_source
+    page = chrome_driver(url)
     team_rank = BeautifulSoup(page, "html.parser")
     team_rank_list = team_rank.select('#wfootballTeamRecordBody>table>tbody>tr')
 
     embed = discord.Embed(title=f"{category} 팀순위", color=0xFFE400)
-    embed.add_field(name="순위 : 팀 [진출 여부]", value="경기수/승/무/패/득점/실점/득실차/도움/파울", inline=False)
+    embed.add_field(name="순위 : 팀 [진출 여부]", value="경기수/승점/승/무/패/득점/실점/득실차", inline=False)
 
     for team in team_rank_list:
         number = len(team.select('div.inner > span'))
@@ -209,23 +172,10 @@ async def football(ctx, category):
 
     await ctx.send(embed=embed)
 
-    driver.quit()
-
 @bot.command()
 async def k1(ctx):
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    options.add_argument('window-size=1920x1080')
-    options.add_argument("disable-gpu")
-
-    path = "C:/Users/J/Desktop/project_007/chromedriver_win32/chromedriver.exe"
-    driver = webdriver.Chrome(executable_path=path, options=options)
-    driver.implicitly_wait(3)
-
     url = f"https://sports.news.naver.com/kfootball/record/index?category=kleague"
-    driver.get(url)
-
-    page = driver.page_source
+    page = chrome_driver(url)
     team_rank = BeautifulSoup(page, "html.parser")
 
     embed = discord.Embed(title="K리그 팀순위", color=0xFFE400)
@@ -275,27 +225,14 @@ async def k1(ctx):
 
     await ctx.send(embed=embed)
 
-    driver.quit()
-
 @bot.command()
 async def mlb(ctx, category):
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    options.add_argument('window-size=1920x1080')
-    options.add_argument("disable-gpu")
-
-    path = "C:/Users/J/Desktop/project_007/chromedriver_win32/chromedriver.exe"
-    driver = webdriver.Chrome(executable_path=path, options=options)
-    driver.implicitly_wait(3)
-
     url = f"https://sports.news.naver.com/wbaseball/record/index?category=mlb&league={category}"
-    driver.get(url)
-
-    page = driver.page_source
+    page = chrome_driver(url)
     team_rank = BeautifulSoup(page, "html.parser")
 
     embed = discord.Embed(title="메이저리그 팀순위", color=0xFFE400)
-    embed.add_field(name="순위 : 팀", value="경기수/승/패/승률/게임차/연속/출루율/장타율/최근10경기", inline=False)
+    embed.add_field(name="순위 : 팀", value="경기수/승/패/승률/게임차/연속/타율/평균자책/최근10경기", inline=False)
 
     team_rank_list = team_rank.select('#eastDivisionTeamRecordList_table>tr')
     embed.add_field(name="동부지구", value=f"{category}", inline=False)
@@ -383,23 +320,10 @@ async def mlb(ctx, category):
 
     await ctx.send(embed=embed)
 
-    driver.quit()
-
 @bot.command()
 async def kbo(ctx):
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    options.add_argument('window-size=1920x1080')
-    options.add_argument("disable-gpu")
-
-    path = "C:/Users/J/Desktop/project_007/chromedriver_win32/chromedriver.exe"
-    driver = webdriver.Chrome(executable_path=path, options=options)
-    driver.implicitly_wait(3)
-
     url = f"https://sports.news.naver.com/kbaseball/record/index?category=kbo"
-    driver.get(url)
-
-    page = driver.page_source
+    page = chrome_driver(url)
     team_rank = BeautifulSoup(page, "html.parser")
     team_rank_list = team_rank.select('#regularTeamRecordList_table>tr')
 
@@ -426,8 +350,6 @@ async def kbo(ctx):
         embed.add_field(name=embed_name, value=embed_value, inline=False)
 
     await ctx.send(embed=embed)
-
-    driver.quit()
 
 buttons = ButtonsClient(bot)
 
@@ -551,3 +473,5 @@ async def hello(ctx):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("명령어를 찾지 못했습니다")
+
+bot.run(token)  # 토큰
