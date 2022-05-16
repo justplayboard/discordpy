@@ -2,11 +2,11 @@ from discord import Embed
 from discord.ext.commands import Bot
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option, create_choice
+from config import *
 from selenium.webdriver import ChromeOptions, Chrome
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
-from config import *
 
 bot = Bot(command_prefix="!")
 slash = SlashCommand(bot, sync_commands=True)
